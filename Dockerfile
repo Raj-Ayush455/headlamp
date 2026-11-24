@@ -2,10 +2,10 @@
 # Final container image. Override it with --build-arg IMAGE_BASE=<image>. The
 # default is on its own FROM line so that Dependabot can update it.
 ARG IMAGE_BASE=default-image-base
-FROM alpine:3.24.2@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6 AS default-image-base
+FROM alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS default-image-base
 FROM ${IMAGE_BASE} AS image-base
 
-FROM --platform=${BUILDPLATFORM} golang:1.26.10@sha256:5c3f3f28a273c9b61698b2d34f18375929790ab1f1d3835d032d21e2b31eae0c AS backend-build
+FROM --platform=${BUILDPLATFORM} golang:1.26.11@sha256:4165ee6bf3b7811fd7b40373290405c83d0167dcb87ee5f29c427cdcef45ff8f AS backend-build
 WORKDIR /headlamp
 
 ARG TARGETOS
@@ -28,7 +28,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     cd ./backend && go build -o ./headlamp-server ./cmd/
 
-FROM --platform=${BUILDPLATFORM} node:22@sha256:0e5f906573693feaa1e21057ebdcfdb5bd5021f050b2dc7c9deceb629c7da2a8 AS frontend-build
+FROM --platform=${BUILDPLATFORM} node:22@sha256:e13726ca604184d7a91fcacab1fc09eefd642dc28e79ac34e85540dd93b78cfb AS frontend-build
 
 # Keep npm install separated so source changes don't trigger install
 COPY frontend/package*.json /headlamp/frontend/
